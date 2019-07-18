@@ -1,0 +1,41 @@
+<html>
+
+  <head>
+    <title>Intelligent Surveillance Camera</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  </head>
+  <body>
+    <h1 style="text-align:center">Intelligent Surveillance Camera</h1>
+    <div class="frame">
+      <img id="camera_link" src="video_feed" alt="Camera stream">
+    </div>
+    <br>
+    <div class="main_input">
+    <form id="package_form" action="" method="post">
+      <input type="submit" name="home_buttons" onclick="videoFeed()" value="Object detections">
+      <input type="submit" name="home_buttons" onclick="feedMotionMask()" value="Motion mask">
+      <input type="submit" name="home_buttons" onclick="feedOriginal()" value="Original">
+      <input type="submit" name="home_buttons" onclick="hello()" value="Stop camera">      
+      <input type="submit" name="home_buttons" value="Download">
+      <input type="submit" name="home_buttons" value="Motion detection">
+    </form>
+    </div>
+
+    <script>
+      function videoFeed() {
+        document.getElementById("camera_link").src = 'video_feed';
+      }
+      function feedOriginal(){
+        document.getElementById("camera_link").src = 'feed_original';
+      }
+      function hello(){
+        document.getElementById("camera_link").src = 'hello';
+      }
+      function feedMotionMask(){
+        document.getElementById("camera_link").src = 'feed_motionmask';
+      }
+    </script>
+  </body>
+</html>
+
+

@@ -1,0 +1,43 @@
+<html>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <head>
+    <title>Intelligent Surveillance Camera</title>
+  </head>
+  <body>
+    <h1>Intelligent Surveillance Camera</h1>
+    <form id="package_form" action="" method="post" >
+      <div class="main_input">
+      <input type="submit" name="download_buttons" value="Select" onclick="SelectButtonClick();">
+      <input type="submit" name="download_buttons" value="Download" onclick="OtherButtonsClick();">
+      <input type="submit" name="download_buttons" value="Download all" onclick="OtherButtonsClick();">
+      <input type="submit" name="download_buttons" value="Delete" onclick="OtherButtonsClick();">
+      <input type="submit" name="download_buttons" value="Delete all" onclick="OtherButtonsClick();">
+      <input type="submit" name="download_buttons" value="Back">
+      </div>
+    <div>
+    <ul>
+      {% for file_name in file_names %}
+        <li>{{file_name}}<input type="checkbox" name="selected" class="download_check" value={{ file_name }}></li>
+	
+      {% endfor %}
+    </ul>
+    </div>
+    </form>
+
+    <script>
+    function SelectButtonClick() {
+	var elements = document.getElementsByClassName("download_check");
+        for(var i=0; i<elements.length; i++){
+            elements[i].style.visibility = 'visible';
+	    elements[i].checked=false;
+        }
+    }
+    function OtherButtonsClick() {
+	var elements = document.getElementsByClassName("download_check");
+        for(var i=0; i<elements.length; i++){
+            elements[i].style.visibility = 'hidden';
+        }
+    }
+  </script>
+  </body>
+</html>

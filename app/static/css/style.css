@@ -1,0 +1,32 @@
+html 
+{
+	font-family: sans-serif; 
+	background: #fff;
+}
+
+h1
+{
+	font-family: serif;
+	color: blue;
+	text-align: center;
+}
+
+body 
+{ 
+	margin: 0 auto;
+	background: white;
+}
+
+.frame{
+	text-align: center;
+}
+
+.main_input{
+	text-align: center;
+}
+
+.download_check{
+	visibility: hidden;
+}
+
+
