@@ -14,14 +14,18 @@ from opencv_server import Camera
 # from camera_pi import Camera
 
 def create_app(test_config=None):
-	print('create app.')
+	print('creating app...')
 	app = Flask(__name__, instance_relative_config=True)
-
 	app.config.from_object(Config)
 	try:
-		os.makedirs(app.instance_path)
+		os.makedirs('./videos')
 	except OSError:
 		pass
+	try:
+		os.makedirs('./zip')
+	except OSError:
+		pass
+
 	from . import db
 	db.init_app(app)
 	from app.home import bp as home_bp
