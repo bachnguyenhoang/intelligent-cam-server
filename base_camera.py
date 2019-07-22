@@ -92,7 +92,7 @@ class BaseCamera(object):
         frames_iterator = cls.frames()
         for frame in frames_iterator:
             BaseCamera.frame = frame
-            BaseCamera.event.set()  # send signal to clients
+            BaseCamera.event.set() # send signal to clients
             time.sleep(0)
 
             # if there hasn't been any clients asking for frames in

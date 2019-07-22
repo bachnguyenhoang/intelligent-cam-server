@@ -36,6 +36,16 @@ class Camera(BaseCamera):
 			out.write(cv2.imdecode(np.fromstring(self.get_frame()[0],np.uint8), cv2.IMREAD_COLOR))
 		#end record
 
+	def record_motion(self):
+		file_path = '/home/quynhtram/flask/cam-server-revised/videos/'
+		fourcc = cv2.VideoWriter_fourcc(*'XVID')
+		while self.enabled:
+			if self.motion:
+				vid_name = str(dt.now())[:-7].replace(' ','_')
+				out = cv2.VideoWriter(file_path+vid_name+'.avi',fourcc, 24, (640,480))
+				while self.motion:
+					out.write(cv2.imdecode(np.fromstring(self.get_frame()[0],np.uint8), cv2.IMREAD_COLOR))
+
 	#helper functions
 	#find centroid of a contour
 	def centroid(contour):
@@ -78,7 +88,6 @@ class Camera(BaseCamera):
 			_, img = image_hub.recv_image()
 			image_hub.send_reply(b'OK')
 			yield img
-	#image_hub = imagezmq.ImageHub()
 	next_frame = receiver()
 
 	def frames():
@@ -87,18 +96,14 @@ class Camera(BaseCamera):
 		detect_interval = 2
 		frame_idx = 0
 
-		#image_hub = imagezmq.ImageHub()
 		fgbg = cv2.bgsegm.createBackgroundSubtractorMOG(history=500,backgroundRatio=0.6)
 		time.sleep(2.0)
 
 		while True:
-			#_, next1 = image_hub.recv_image()
 			next1 = next(Camera.next_frame)
-			#image_hub.send_reply(b'OK')
 			start = time.time()
-			next1 = cv2.GaussianBlur(next1,(7,7),0)
-			#next1 = vs.read()
-			next_gray = cv2.cvtColor(next1, cv2.COLOR_BGR2GRAY)             
+			next1_copy = cv2.GaussianBlur(next1,(7,7),0)
+			next_gray = cv2.cvtColor(next1_copy, cv2.COLOR_BGR2GRAY)             
 			vis = next1.copy()
 
 			mask = fgbg.apply(next1)
@@ -159,7 +164,7 @@ class Camera(BaseCamera):
 						        cv2.putText(vis, str(round(v_mean,1)), (centr[0] - 20, centr[1] - 20),
 									cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255),2)
 				else:
-					self.motion = False
+					#self.motion = False
 				
 			#detect for new tracking points after 1 interval
 			if frame_idx % detect_interval == 0:
