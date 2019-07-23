@@ -8,6 +8,7 @@ from app.home.helper import *
 
 #directories
 @bp.route('/', methods=('GET', 'POST'))
+@static_vars(toggle=False)
 def index():
 	camera = Camera()
 	if request.method == 'POST':
@@ -15,7 +16,9 @@ def index():
 			#enable camera with object detection
 			return ('', 204)
 		if request.form['home_buttons'] == 'Stop camera':
-			#disable camera		
+			#disable camera
+			index.toggle = False
+			Camera.enable_motion = index.toggle
 			return ('', 204)
 		if request.form['home_buttons'] == 'Original':
 			#enable camera - no object detection
@@ -29,7 +32,9 @@ def index():
 		if request.form['home_buttons'] == 'Motion detection':
 			#turn on motion detection:
 			#enable video recording when motion in frame
-			camera.recorder()
+			index.toggle = not index.toggle
+			Camera.enable_motion = index.toggle
+			print("Motion detection status: " + str(Camera.enable_motion))
 			return ('', 204)
 	return render_template('home/home.html')
 

@@ -20,6 +20,9 @@ import time
 from base_camera import BaseCamera
 
 class Camera(BaseCamera):
+
+	enable_motion = False
+
 	def __init__(self):
 		super().__init__()
 		self.motion = False
@@ -35,16 +38,6 @@ class Camera(BaseCamera):
 		while time.time() - start <= 10:
 			out.write(cv2.imdecode(np.fromstring(self.get_frame()[0],np.uint8), cv2.IMREAD_COLOR))
 		#end record
-
-	def record_motion(self):
-		file_path = '/home/quynhtram/flask/cam-server-revised/videos/'
-		fourcc = cv2.VideoWriter_fourcc(*'XVID')
-		while self.enabled:
-			if self.motion:
-				vid_name = str(dt.now())[:-7].replace(' ','_')
-				out = cv2.VideoWriter(file_path+vid_name+'.avi',fourcc, 24, (640,480))
-				while self.motion:
-					out.write(cv2.imdecode(np.fromstring(self.get_frame()[0],np.uint8), cv2.IMREAD_COLOR))
 
 	#helper functions
 	#find centroid of a contour
@@ -91,6 +84,8 @@ class Camera(BaseCamera):
 	next_frame = receiver()
 
 	def frames():
+		file_path = '/home/quynhtram/flask/cam-server-revised/videos/'
+		fourcc = cv2.VideoWriter_fourcc(*'XVID')
 		tracks = []
 		track_len = 5
 		detect_interval = 2
@@ -99,14 +94,19 @@ class Camera(BaseCamera):
 		fgbg = cv2.bgsegm.createBackgroundSubtractorMOG(history=500,backgroundRatio=0.6)
 		time.sleep(2.0)
 
-		while True:
-			next1 = next(Camera.next_frame)
-			start = time.time()
-			next1_copy = cv2.GaussianBlur(next1,(7,7),0)
-			next_gray = cv2.cvtColor(next1_copy, cv2.COLOR_BGR2GRAY)             
-			vis = next1.copy()
+		already_recording = False
+		no_motion = time.time()
 
-			mask = fgbg.apply(next1)
+		while True:
+			start_recording = False
+			end_recording = False
+			next_frame = next(Camera.next_frame)
+			
+			next_copy = cv2.GaussianBlur(next_frame,(7,7),0)
+			next_gray = cv2.cvtColor(next_copy, cv2.COLOR_BGR2GRAY)             
+			vis = next_frame.copy()
+
+			mask = fgbg.apply(next_copy)
 		
 			if len(tracks) > 0:
 				img0, img1 = prev_gray, next_gray
@@ -137,7 +137,7 @@ class Camera(BaseCamera):
 				#loop through the tracked points
 				for tr, (x, y), v, label_flag, label, good_flag in zip(tracks, p1.reshape(-1, 2), velocity, labels_flag, 						clustering, good):
 					#remove noise                        
-					if not (good_flag and label_flag and v > .4):
+					if not (good_flag and label_flag and v > 4):
 				                continue
 					#add points to corresponding lists
 					tr.append((x, y))
@@ -151,20 +151,38 @@ class Camera(BaseCamera):
 			       	
 				#draw lines showing optical flow trail		
 				cv2.polylines(vis, [np.int32(tr) for tr in tracks], False, (0, 255, 0))
-				if cluster_list is not None:
-					#self.motion = True
-					#draw bounding rectangles for every clusters found
-					for i in range(len(cluster_list)):
-						hull = cv2.convexHull(np.float32(cluster_list[i]).reshape(-1,2))
-						color = (3, 1, 1)
-						if hull is not None:
-						        v_mean = np.mean(velocity_list[i])/10
-						        centr = Camera.bounding_rec(vis,hull,color)
-						        cv2.circle(vis,centr,2,(255,0,255),-1)
-						        cv2.putText(vis, str(round(v_mean,1)), (centr[0] - 20, centr[1] - 20),
+				#draw bounding rectangles for every clusters found
+				for i in range(len(cluster_list)):
+					hull = cv2.convexHull(np.float32(cluster_list[i]).reshape(-1,2))
+					color = (3, 1, 1)
+					if hull is not None:
+						v_mean = np.mean(velocity_list[i])/10
+						centr = Camera.bounding_rec(vis,hull,color)
+						cv2.circle(vis,centr,2,(255,0,255),-1)
+						cv2.putText(vis, str(round(v_mean,1)), (centr[0] - 20, centr[1] - 20),
 									cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255),2)
-				else:
-					#self.motion = False
+				#condition checking for creating motion video
+				if sum(len(cluster_list[i]) for i in range(len(cluster_list))) > 0 and (not already_recording) and Camera.enable_motion:
+					start_recording = True
+					print('start recording...')
+					already_recording = True
+				if sum(len(cluster_list[i]) for i in range(len(cluster_list))) > 0 and already_recording and Camera.enable_motion:
+					no_motion = time.time()
+
+				if (time.time() - no_motion > 5) and already_recording and Camera.enable_motion:
+					end_recording = True
+					start_recording = False
+					already_recording = False
+					print('recording stopped')
+			#record video if enable motion detection
+			if start_recording and Camera.enable_motion:
+				print("creating a video...")
+				vid_name = str(dt.now())[:-7].replace(' ','_')
+				out = cv2.VideoWriter(file_path+vid_name+'.avi',fourcc, 24, (640,480))
+				already_recording = True
+
+			if (not end_recording) and already_recording and Camera.enable_motion:
+				out.write(vis)
 				
 			#detect for new tracking points after 1 interval
 			if frame_idx % detect_interval == 0:
@@ -188,7 +206,7 @@ class Camera(BaseCamera):
 			prev_gray = next_gray
 			ch = cv2.waitKey(1)
 			yield (cv2.imencode('.jpg', vis)[1].tobytes(),
-				cv2.imencode('.jpg', next1)[1].tobytes(),
+				cv2.imencode('.jpg', next_frame)[1].tobytes(),
 				cv2.imencode('.jpg', mask)[1].tobytes())
 
 
