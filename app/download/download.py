@@ -29,22 +29,22 @@ def download():
 			print('proceed to delete ' + str(request.form.getlist('selected')) + '...')
 			for item in request.form.getlist('selected'):
 				os.remove(file_path + item)
-				os.remove(thumbnails_path + item[:-4] + '.png')
+				os.remove(thumbnails_path + item[:-4] + '.jpg')
 				file_names = os.listdir(file_path)				
 			print('remain files: ' + str(file_names))
 			return render_template('download/download.html', file_path=file_path, file_names=file_names)
 		if request.form['download_buttons'] == 'Delete all':
 			for item in file_names:
 				os.remove(file_path + item)
-				os.remove(thumbnails_path + item[:-4] + '.png')
+				os.remove(thumbnails_path + item[:-4] + '.jpg')
 			file_names = os.listdir(file_path)
 			return render_template('download/download.html', file_names=file_names)
 	return render_template('download/download.html', file_names=file_names)
 
 @bp.route('/thumbs/<file_name>')
 def thumbnail(file_name):
-	thumbnails_path = '/home/quynhtram/flask/cam-server-revised/thumbnails/' 
-	with open(thumbnails_path + file_name[:-4] + '.png', "rb") as frame:
+	thumbnails_path = './thumbnails/' 
+	with open(thumbnails_path + file_name, "rb") as frame:
 		f = frame.read()
 		b = bytearray(f)
 		return Response((b'--frame\r\n'

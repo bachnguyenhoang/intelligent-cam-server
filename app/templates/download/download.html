@@ -21,7 +21,7 @@
       <div class="row justify-content-start">
       {% for file_name in file_names %}
         <div class="col-3 text-center">
-	  <img src=thumbs/{{file_name}} alt={{file_name}} />
+	  <img src=thumbs/{{file_name[:-4]+'.jpg'}} alt={{file_name}} />
 	  <div>{{file_name}} <input type="checkbox" name="selected" class="download_check" value={{ file_name }}></div>
 	</div>
       {% endfor %}
