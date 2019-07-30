@@ -1,5 +1,5 @@
 from flask import (
-	Blueprint, flash, g, redirect, render_template, request, url_for, send_from_directory, send_file
+	Blueprint, flash, g, redirect, render_template, request, url_for, send_from_directory, send_file, Response
 )
 from werkzeug.exceptions import abort
 from opencv_server import Camera
@@ -12,6 +12,7 @@ bp = Blueprint('download', __name__)
 @bp.route('/download', methods=('GET', 'POST'))
 def download():
 	file_path = '/home/quynhtram/flask/cam-server-revised/videos/'
+	thumbnails_path = '/home/quynhtram/flask/cam-server-revised/thumbnails/'
 	file_names = os.listdir(file_path)
 
 	if request.method == 'POST':
@@ -28,15 +29,28 @@ def download():
 			print('proceed to delete ' + str(request.form.getlist('selected')) + '...')
 			for item in request.form.getlist('selected'):
 				os.remove(file_path + item)
-				file_names = os.listdir(file_path)
+				os.remove(thumbnails_path + item[:-4] + '.png')
+				file_names = os.listdir(file_path)				
 			print('remain files: ' + str(file_names))
 			return render_template('download/download.html', file_path=file_path, file_names=file_names)
 		if request.form['download_buttons'] == 'Delete all':
 			for item in file_names:
 				os.remove(file_path + item)
-				file_names = os.listdir(file_path)
+				os.remove(thumbnails_path + item[:-4] + '.png')
+			file_names = os.listdir(file_path)
 			return render_template('download/download.html', file_names=file_names)
 	return render_template('download/download.html', file_names=file_names)
+
+@bp.route('/thumbs/<file_name>')
+def thumbnail(file_name):
+	thumbnails_path = '/home/quynhtram/flask/cam-server-revised/thumbnails/' 
+	with open(thumbnails_path + file_name[:-4] + '.png', "rb") as frame:
+		f = frame.read()
+		b = bytearray(f)
+		return Response((b'--frame\r\n'
+	       			b'Content-Type: image/jpeg\r\n\r\n' + b + b'\r\n'),
+				mimetype='multipart/x-mixed-replace; boundary=frame')
+	
 
 def file_zip(file_path, file_names):
 	if len(file_names) == 0:

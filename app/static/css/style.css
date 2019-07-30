@@ -6,8 +6,8 @@ html
 
 h1
 {
-	font-family: serif;
-	color: blue;
+	font-family: sans-serif;
+	color: black;
 	text-align: center;
 }
 
@@ -25,8 +25,5 @@ body
 	text-align: center;
 }
 
-.download_check{
-	visibility: hidden;
-}
 
 

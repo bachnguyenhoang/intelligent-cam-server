@@ -35,12 +35,10 @@ def index():
 			index.toggle = not index.toggle
 			Camera.enable_motion = index.toggle
 			print("Motion detection status: " + str(Camera.enable_motion))
-			return ('', 204)
-	return render_template('home/home.html')
+			return render_template('home/home.html', motion='on' if Camera.enable_motion else 'off')
+	return render_template('home/home.html', motion='on' if Camera.enable_motion else 'off')
 
-#initiate a single camera instance for the page
-print('init camera')
-#camera = Camera()
+#directories for video feeds
 @bp.route('/video_feed')
 def video_feed():
 	"""Video streaming route. Put this in the src attribute of an img tag."""
@@ -67,7 +65,6 @@ def hello():
 		return Response((b'--frame\r\n'
 	       			b'Content-Type: image/jpeg\r\n\r\n' + b + b'\r\n'),
 				mimetype='multipart/x-mixed-replace; boundary=frame')
-	#return 'Hello, World!'
 	
 @bp.route('/goodbye')
 def goodbye():

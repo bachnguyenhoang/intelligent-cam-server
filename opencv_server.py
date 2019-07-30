@@ -18,6 +18,8 @@ from datetime import datetime as dt
 import time
 
 from base_camera import BaseCamera
+from thumbnails import create_thumbnails
+
 
 class Camera(BaseCamera):
 
@@ -173,7 +175,6 @@ class Camera(BaseCamera):
 					end_recording = True
 					start_recording = False
 					already_recording = False
-					print('recording stopped')
 			#record video if enable motion detection
 			if start_recording and Camera.enable_motion:
 				print("creating a video...")
@@ -183,7 +184,11 @@ class Camera(BaseCamera):
 
 			if (not end_recording) and already_recording and Camera.enable_motion:
 				out.write(vis)
-				
+			if end_recording or (already_recording and (not Camera.enable_motion)):
+				already_recording = False
+				print('recording stopped')
+				out.release()
+				create_thumbnails()
 			#detect for new tracking points after 1 interval
 			if frame_idx % detect_interval == 0:
 				for x, y in [np.int32(tr[-1]) for tr in tracks]:

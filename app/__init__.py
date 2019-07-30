@@ -25,7 +25,10 @@ def create_app(test_config=None):
 		os.makedirs('./zip')
 	except OSError:
 		pass
-
+	try:
+		os.makedirs('./thumbnails')
+	except OSError:
+		pass
 	from . import db
 	db.init_app(app)
 	from app.home import bp as home_bp
