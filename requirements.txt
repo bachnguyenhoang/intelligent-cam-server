@@ -2,7 +2,6 @@ certifi==2019.6.16
 chardet==3.0.4
 Click==7.0
 cycler==0.10.0
-dlib==19.17.0
 Flask==1.1.1
 Flask-WTF==0.14.2
 idna==2.8
