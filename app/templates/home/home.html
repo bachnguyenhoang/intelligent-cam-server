@@ -4,11 +4,12 @@
     <title>Intelligent Surveillance Camera</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap/bootstrap.min.css') }}">
+    <script src="{{ url_for('static', filename='js/jquery-3.4.1.js') }}"></script>
   </head>
   <body>
     <h1 style="text-align:center">Intelligent Surveillance Camera</h1>
     <div class="frame">
-      <img id="camera_link" src="video_feed" alt="Camera stream">
+      <img id="camera_link" src="hello" alt="Camera stream">
     </div>
     <br>
     <div class="main_input">
@@ -17,11 +18,13 @@
       <button type="submit" class="btn btn-primary" name="home_buttons" onclick="feedMotionMask()" value="Motion mask">Motion mask</button>
       <button type="submit" class="btn btn-primary" name="home_buttons" onclick="feedOriginal()" value="Original">Original</button>
       <button type="submit" class="btn btn-primary" name="home_buttons" onclick="hello()" value="Stop camera">Stop camera</button>      
-      <button type="submit" class="btn btn-primary" id="motionButton" name="home_buttons" value="Motion detection">Motion detection: {{ motion }}</button>
+      <button type="submit" class="btn btn-primary" id="motionButton" name="home_buttons" value="Motion detection">Motion detection: off</button>
       <button type="submit" class="btn btn-primary" name="home_buttons" value="Download">Download</button>
+      <button type="submit" class="btn btn-primary" name="home_buttons" value="Setting">Setting</button>
     </form>
+      
     </div>
-
+    
     <script>
       function videoFeed() {
         document.getElementById("camera_link").src = 'video_feed';
@@ -35,7 +38,15 @@
       function feedMotionMask(){
         document.getElementById("camera_link").src = 'feed_motionmask';
       }
+
     </script>
+    <script>
+      $(document).ready(function(){
+        $("#motionButton").click(function(){
+          $("#motionButton").load("/motionstatus")
+        });
+      });
+</script>
   </body>
 </html>
 

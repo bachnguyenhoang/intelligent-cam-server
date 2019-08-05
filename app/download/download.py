@@ -11,8 +11,8 @@ bp = Blueprint('download', __name__)
 
 @bp.route('/download', methods=('GET', 'POST'))
 def download():
-	file_path = '/home/quynhtram/flask/cam-server-revised/videos/'
-	thumbnails_path = '/home/quynhtram/flask/cam-server-revised/thumbnails/'
+	file_path = './videos/'
+	thumbnails_path = './thumbnails/'
 	file_names = os.listdir(file_path)
 
 	if request.method == 'POST':
@@ -53,13 +53,14 @@ def thumbnail(file_name):
 	
 
 def file_zip(file_path, file_names):
+	file_path = os.path.abspath(os.path.dirname(file_path)) + '/'
 	if len(file_names) == 0:
 		return '',204
 	elif len(file_names) == 1:
 		return send_from_directory(file_path,file_names[0],as_attachment=True)
 	else:
-		zipf = zipfile.ZipFile('/home/quynhtram/flask/cam-server-revised/zip/'+'vids.zip','w', zipfile.ZIP_DEFLATED)
+		zipf = zipfile.ZipFile(file_path[:-7] + 'zip/'+'vids.zip','w', zipfile.ZIP_DEFLATED)
 		for file_name in file_names:
 			zipf.write(file_path+file_name,file_name)
 		zipf.close()
-		return send_file('/home/quynhtram/flask/cam-server-revised/zip/'+'vids.zip', mimetype='zip', attachment_filename='vids.zip', as_attachment=True)
+		return send_file(file_path[:-7] + 'zip/'+'vids.zip', mimetype='zip', attachment_filename='vids.zip', as_attachment=True)

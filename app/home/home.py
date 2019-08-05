@@ -35,8 +35,10 @@ def index():
 			index.toggle = not index.toggle
 			Camera.enable_motion = index.toggle
 			print("Motion detection status: " + str(Camera.enable_motion))
-			return render_template('home/home.html', motion='on' if Camera.enable_motion else 'off')
-	return render_template('home/home.html', motion='on' if Camera.enable_motion else 'off')
+			return ('',204)
+		if request.form['home_buttons'] == 'Setting':
+			return redirect(url_for('setting.setting'))
+	return render_template('home/home.html')
 
 #directories for video feeds
 @bp.route('/video_feed')
@@ -59,14 +61,14 @@ def feed_motionmask():
 		
 @bp.route('/hello')
 def hello():
-	with open("img/a.jpg", "rb") as frame:
+	with open("img/disabled.jpg", "rb") as frame:
 		f = frame.read()
 		b = bytearray(f)
 		return Response((b'--frame\r\n'
 	       			b'Content-Type: image/jpeg\r\n\r\n' + b + b'\r\n'),
 				mimetype='multipart/x-mixed-replace; boundary=frame')
 	
-@bp.route('/goodbye')
+@bp.route('/motionstatus')
 def goodbye():
-	return 'Goodbye, World!'
+	return 'Motion detection: ' + ('off' if Camera.enable_motion else 'on')
 

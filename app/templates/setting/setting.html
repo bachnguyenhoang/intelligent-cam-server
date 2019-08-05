@@ -1,0 +1,66 @@
+<html>
+  <head>
+    <title>Setting</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap/bootstrap.min.css') }}">
+    <script src="{{ url_for('static', filename='js/jquery-3.4.1.js') }}"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="main-input">
+        <form id="setting-form" action="" method="post" novalidate>
+          {{ form.hidden_tag() }}
+
+          <table>
+            <tr>
+              <th>Background subtraction's parameters</th>
+            </tr>
+            <tr>
+	      <td>{{ form.background.label }}</td></td><td>{{ form.background(value=default.backgroundRatio) }} </td>
+            </tr>
+            <tr>
+              <td>{{ form.history.label }}</td><td>{{form.history(value=default.history)}}</td>
+            </tr>
+
+            <tr>
+              <th>Corner detector's parameters</th>
+            </tr>
+            <tr>
+              <td>{{form.maxCorners.label}}</td><td>{{form.maxCorners(value=default.maxCorners)}}</td>
+            </tr>
+            <tr>
+              <td>{{form.qualityLevel.label}}</td><td>{{form.qualityLevel(value=default.qualityLevel)}}</td>
+            </tr>
+            <tr>
+              <td>{{form.minDistance.label}}</td><td>{{form.minDistance(value=default.minDistance)}}</td>
+            </tr>
+            <tr>
+              <td>{{form.blockSize.label}}</td><td>{{form.blockSize(value=default.blockSize)}}</td>
+            </tr>
+
+            <tr>
+              <th>Region of interest</th>
+            </tr>
+            <tr>
+              <td>{{form.xmin.label}}</td><td>{{form.xmin(value=0)}}</td>
+            </tr>
+            <tr>
+              <td>{{form.ymin.label}}</td><td>{{form.ymin(value=0)}}</td>
+            </tr>
+            <tr>
+              <td>{{form.xmax.label}}</td><td>{{form.xmax(value=640)}}</td>
+            </tr>
+            <tr>
+              <td>{{form.ymax.label}}</td><td>{{form.ymax(value=480)}}</td>
+            </tr>
+         </table>
+
+         {{form.submit(class="btn btn-primary")}}
+        </form>
+	<form method="post" action="">
+	<button type="submit" class="btn" name="setting_buttons" value="Back">Back</button>
+	</form>
+      </div>
+    </div>
+  </body>
+</html

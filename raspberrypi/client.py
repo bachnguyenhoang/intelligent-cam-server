@@ -9,6 +9,7 @@ import imagezmq
 
 ap = argparse.ArgumentParser()
 ap.add_argument('-ip','--IPAddress', required=True, help='ip address of the server')
+ap.add_argument('-f','--framerate', default=25, help='framerate of the camera')
 args = vars(ap.parse_args())
 
 sender = imagezmq.ImageSender(connect_to=('tcp://{}:5555'.format(args["IPAddress"])))

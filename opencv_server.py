@@ -22,26 +22,38 @@ from thumbnails import create_thumbnails
 
 
 class Camera(BaseCamera):
+	#class attributes
 
 	enable_motion = False
+
+	# params for ShiTomasi corner detection
+	feature_params = dict( maxCorners = 200,
+		               qualityLevel = 0.025,
+		               minDistance = 3,
+		               blockSize = 5 )
+
+	# Parameters for lucas kanade optical flow
+	lk_params = dict( winSize  = (15,15),
+		          maxLevel = 6,
+		          criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03))
+	#Parameters for background subtraction
+	subtractor_params = dict( backgroundRatio = 0.6, 
+				 history = 500)
 
 	def __init__(self):
 		super().__init__()
 		self.motion = False
-		
-		
-	def recorder(self):
-		#create file
-		file_path = '/home/quynhtram/flask/cam-server-revised/videos/'
-		fourcc = cv2.VideoWriter_fourcc(*'XVID')
-		vid_name = str(dt.now())[:-7].replace(' ','_')
-		out = cv2.VideoWriter(file_path+vid_name+'.avi',fourcc, 24, (640,480))
-		start = time.time()
-		while time.time() - start <= 10:
-			out.write(cv2.imdecode(np.fromstring(self.get_frame()[0],np.uint8), cv2.IMREAD_COLOR))
-		#end record
 
 	#helper functions
+	#setter
+	def set_feature_params(maxCorners, qualityLevel, minDistance, blockSize):
+		Camera.feature_params['maxCorners'] = maxCorners
+		Camera.feature_params['qualityLevel'] = qualityLevel
+		Camera.feature_params['minDistance'] = minDistance
+		Camera.feature_params['blockSize'] = blockSize
+	def set_subtractor_params(backgroundRatio, history):
+		Camera.subtractor_params['backgroundRatio'] = backgroundRatio
+		Camera.subtractor_params['history'] = history
 	#find centroid of a contour
 	def centroid(contour):
 		try:
@@ -64,18 +76,6 @@ class Camera(BaseCamera):
 		cluster = DBSCAN(eps=eps,min_samples=4).fit(input_set)
 		labels = cluster.labels_
 		return labels
-
-	#class attribute
-	# params for ShiTomasi corner detection
-	feature_params = dict( maxCorners = 200,
-		               qualityLevel = 0.025,
-		               minDistance = 3,
-		               blockSize = 5 )
-
-	# Parameters for lucas kanade optical flow
-	lk_params = dict( winSize  = (15,15),
-		          maxLevel = 6,
-		          criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03))
 
 	def receiver():
 		image_hub = imagezmq.ImageHub()
