@@ -39,6 +39,7 @@ class Camera(BaseCamera):
 	#Parameters for background subtraction
 	subtractor_params = dict( backgroundRatio = 0.6, 
 				 history = 500)
+	region_params = dict(xmin=0,ymin=0,xmax=0,ymax=0)
 
 	def __init__(self):
 		super().__init__()
@@ -47,13 +48,18 @@ class Camera(BaseCamera):
 	#helper functions
 	#setter
 	def set_feature_params(maxCorners, qualityLevel, minDistance, blockSize):
-		Camera.feature_params['maxCorners'] = maxCorners
+		Camera.feature_params['maxCorners'] = int(maxCorners)
 		Camera.feature_params['qualityLevel'] = qualityLevel
-		Camera.feature_params['minDistance'] = minDistance
-		Camera.feature_params['blockSize'] = blockSize
+		Camera.feature_params['minDistance'] = int(minDistance)
+		Camera.feature_params['blockSize'] = int(blockSize)
 	def set_subtractor_params(backgroundRatio, history):
 		Camera.subtractor_params['backgroundRatio'] = backgroundRatio
-		Camera.subtractor_params['history'] = history
+		Camera.subtractor_params['history'] = int(history)
+	def set_region_params(xmin, ymin, xmax, ymax):
+		Camera.region_params['xmin'] = int(xmin)
+		Camera.region_params['ymin'] = int(ymin)
+		Camera.region_params['xmax'] = int(xmax)
+		Camera.region_params['ymax'] = int(ymax)
 	#find centroid of a contour
 	def centroid(contour):
 		try:
@@ -86,20 +92,22 @@ class Camera(BaseCamera):
 	next_frame = receiver()
 
 	def frames():
-		file_path = '/home/quynhtram/flask/cam-server-revised/videos/'
-		fourcc = cv2.VideoWriter_fourcc(*'XVID')
+		#parameters for tracking and sampling
 		tracks = []
 		track_len = 5
 		detect_interval = 2
 		frame_idx = 0
-
+		#background subtraction
 		fgbg = cv2.bgsegm.createBackgroundSubtractorMOG(history=500,backgroundRatio=0.6)
 		time.sleep(2.0)
-
+		#flags for recording
 		already_recording = False
 		no_motion = time.time()
-
+		#parameters for recording
+		file_path = '/home/quynhtram/flask/cam-server-revised/videos/'
+		fourcc = cv2.VideoWriter_fourcc(*'XVID')
 		while True:
+			#flags for recording
 			start_recording = False
 			end_recording = False
 			next_frame = next(Camera.next_frame)
@@ -109,7 +117,8 @@ class Camera(BaseCamera):
 			vis = next_frame.copy()
 
 			mask = fgbg.apply(next_copy)
-		
+			mask[Camera.region_params['ymin']:Camera.region_params['ymax'],Camera.region_params['xmin']:Camera.region_params['xmax']] = 0
+
 			if len(tracks) > 0:
 				img0, img1 = prev_gray, next_gray
 				#calculate flow											
@@ -153,6 +162,7 @@ class Camera(BaseCamera):
 			       	
 				#draw lines showing optical flow trail		
 				cv2.polylines(vis, [np.int32(tr) for tr in tracks], False, (0, 255, 0))
+
 				#draw bounding rectangles for every clusters found
 				for i in range(len(cluster_list)):
 					hull = cv2.convexHull(np.float32(cluster_list[i]).reshape(-1,2))
@@ -163,6 +173,7 @@ class Camera(BaseCamera):
 						cv2.circle(vis,centr,2,(255,0,255),-1)
 						cv2.putText(vis, str(round(v_mean,1)), (centr[0] - 20, centr[1] - 20),
 									cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255),2)
+				
 				#condition checking for creating motion video
 				if sum(len(cluster_list[i]) for i in range(len(cluster_list))) > 0 and (not already_recording) and Camera.enable_motion:
 					start_recording = True
@@ -175,20 +186,26 @@ class Camera(BaseCamera):
 					end_recording = True
 					start_recording = False
 					already_recording = False
-			#record video if enable motion detection
+
+			#record video if enable motion detection and flags
 			if start_recording and Camera.enable_motion:
-				print("creating a video...")
+				
 				vid_name = str(dt.now())[:-7].replace(' ','_')
 				out = cv2.VideoWriter(file_path+vid_name+'.avi',fourcc, 24, (640,480))
 				already_recording = True
+				print("[DEBUG] Start recording: {}...".format(start_recording))
+				print("[DEBUG] Already recording: {}...".format(already_recording))
+				print("[DEBUG] End recording: {}...".format(end_recording))
 
 			if (not end_recording) and already_recording and Camera.enable_motion:
-				out.write(vis)
+				out.write(next_frame)
 			if end_recording or (already_recording and (not Camera.enable_motion)):
 				already_recording = False
-				print('recording stopped')
 				out.release()
 				create_thumbnails()
+				print("[DEBUG] Start recording: {}...".format(start_recording))
+				print("[DEBUG] Already recording: {}...".format(already_recording))
+				print("[DEBUG] End recording: {}...".format(end_recording))
 			#detect for new tracking points after 1 interval
 			if frame_idx % detect_interval == 0:
 				for x, y in [np.int32(tr[-1]) for tr in tracks]:

@@ -13,7 +13,7 @@ bp = Blueprint('download', __name__)
 def download():
 	file_path = './videos/'
 	thumbnails_path = './thumbnails/'
-	file_names = os.listdir(file_path)
+	file_names = sorted(os.listdir(file_path))
 
 	if request.method == 'POST':
 		if request.form['download_buttons'] == 'Select':

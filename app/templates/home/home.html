@@ -9,7 +9,7 @@
   <body>
     <h1 style="text-align:center">Intelligent Surveillance Camera</h1>
     <div class="frame">
-      <img id="camera_link" src="hello" alt="Camera stream">
+      <img id="camera_link" src="video_feed" alt="Camera stream">
     </div>
     <br>
     <div class="main_input">
@@ -18,7 +18,7 @@
       <button type="submit" class="btn btn-primary" name="home_buttons" onclick="feedMotionMask()" value="Motion mask">Motion mask</button>
       <button type="submit" class="btn btn-primary" name="home_buttons" onclick="feedOriginal()" value="Original">Original</button>
       <button type="submit" class="btn btn-primary" name="home_buttons" onclick="hello()" value="Stop camera">Stop camera</button>      
-      <button type="submit" class="btn btn-primary" id="motionButton" name="home_buttons" value="Motion detection">Motion detection: off</button>
+      <button type="submit" class="btn btn-primary" id="motionButton" name="home_buttons" value="Motion detection"></button>
       <button type="submit" class="btn btn-primary" name="home_buttons" value="Download">Download</button>
       <button type="submit" class="btn btn-primary" name="home_buttons" value="Setting">Setting</button>
     </form>
@@ -42,11 +42,16 @@
     </script>
     <script>
       $(document).ready(function(){
-        $("#motionButton").click(function(){
           $("#motionButton").load("/motionstatus")
+      });
+    </script>
+    <script>
+      $(document).ready(function(){
+        $("#motionButton").click(function(){
+          $("#motionButton").load("/reversestatus")
         });
       });
-</script>
+    </script>
   </body>
 </html>
 

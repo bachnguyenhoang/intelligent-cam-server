@@ -12,9 +12,9 @@ class SettingForm(FlaskForm):
 	minDistance = DecimalField(label="Minimum distance:", places=0, validators=[validators.InputRequired(),validators.NumberRange(min=0)])
 	blockSize = DecimalField(label="Block size:", places=0, validators=[validators.InputRequired(),validators.NumberRange(min=1)])
 	#mask
-	xmin = DecimalField(label="xmin:", places=0, validators=[validators.InputRequired(),validators.NumberRange(0, 640)])
-	ymin = DecimalField(label="ymin:", places=0, validators=[validators.InputRequired(),validators.NumberRange(0, 480)])
-	ymax = DecimalField(label="ymax:", places=0, validators=[validators.InputRequired(),validators.NumberRange(0, 480)])
-	xmax = DecimalField(label="xmax:", places=0, validators=[validators.InputRequired(),validators.NumberRange(0, 640)])
+	xmin = DecimalField(label="xmin:", places=0, validators=[validators.InputRequired(),validators.NumberRange(0, 639)])
+	ymin = DecimalField(label="ymin:", places=0, validators=[validators.InputRequired(),validators.NumberRange(0, 479)])
+	ymax = DecimalField(label="ymax:", places=0, validators=[validators.InputRequired(),validators.NumberRange(0, 479)])
+	xmax = DecimalField(label="xmax:", places=0, validators=[validators.InputRequired(),validators.NumberRange(0, 639)])
 	
 	submit = SubmitField('Submit')

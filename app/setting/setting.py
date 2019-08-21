@@ -14,10 +14,11 @@ def setting():
 	if form.validate():
 		print("valid")
 	print(form.errors)
-	default = {**Camera.feature_params, **Camera.subtractor_params}
+	default = {**Camera.feature_params, **Camera.subtractor_params, **Camera.region_params}
 	if form.validate_on_submit():
 		Camera.set_feature_params(form.maxCorners.data, form.qualityLevel.data,form.minDistance.data,form.blockSize.data)
 		Camera.set_subtractor_params(form.background.data,form.history.data)
+		Camera.set_region_params(form.xmin.data,form.ymin.data,form.xmax.data,form.ymax.data)
 		return redirect(url_for('home.index'))
 	if request.method=='POST':
 		if request.form['setting_buttons'] == 'Back':
