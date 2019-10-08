@@ -4,7 +4,7 @@ from flask import (
 from werkzeug.exceptions import abort
 from app.home import bp
 from opencv_server import Camera
-from app.home.helper import *
+from app.home.home_utils import *
 
 #directories
 @bp.route('/', methods=('GET', 'POST'))
@@ -37,6 +37,8 @@ def index():
 			print("Motion detection status: " + str(Camera.enable_motion))
 			return ('',204)
 		if request.form['home_buttons'] == 'Setting':
+			index.toggle = False
+			Camera.enable_motion = index.toggle
 			return redirect(url_for('setting.setting'))
 	return render_template('home/home.html')
 
@@ -69,6 +71,10 @@ def hello():
 				mimetype='multipart/x-mixed-replace; boundary=frame')
 	
 @bp.route('/motionstatus')
-def goodbye():
+def motionStatus():
+	return 'Motion detection: ' + ('on' if Camera.enable_motion else 'off')
+@bp.route('/reversestatus')
+def reverseStatus():
 	return 'Motion detection: ' + ('off' if Camera.enable_motion else 'on')
+
 

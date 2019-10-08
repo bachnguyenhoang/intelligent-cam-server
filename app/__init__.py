@@ -9,6 +9,7 @@ def create_app(test_config=None):
 	print('creating app...')
 	app = Flask(__name__, instance_relative_config=True)
 	app.config.from_object(Config)
+	# Create path for files
 	try:
 		os.makedirs('./videos')
 	except OSError:
@@ -19,6 +20,18 @@ def create_app(test_config=None):
 		pass
 	try:
 		os.makedirs('./thumbnails')
+	except OSError:
+		pass
+	try:
+		os.makedirs('./original')
+	except OSError:
+		pass
+	try:
+		os.makedirs('./json')
+	except OSError:
+		pass
+	try:
+		os.makedirs('./detection')
 	except OSError:
 		pass
 	from . import db

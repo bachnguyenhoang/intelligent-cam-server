@@ -2,18 +2,17 @@ import os
 import cv2
 
 def create_thumbnails():
-    vids = os.listdir('/home/quynhtram/flask/cam-server-revised/videos/')
+    vids = os.listdir('./videos/')
     vids = [vids[i][:-4] for i in range(len(vids))]
-    thumbs = os.listdir('/home/quynhtram/flask/cam-server-revised/thumbnails/')
+    thumbs = os.listdir('./thumbnails/')
     thumbs = [thumbs[i][:-4] for i in range(len(thumbs))]
     no_thumbs = list(set(vids).difference(set(thumbs)))
-    print(no_thumbs)    
     for vid in no_thumbs:
-        vid_path = '/home/quynhtram/flask/cam-server-revised/videos/' + vid+'.avi'
+        vid_path = './videos/' + vid+'.avi'
         print(vid_path)
         frame = video_to_frame(vid_path)
         thumb = image_to_thumbs(frame[0])
-        cv2.imwrite('/home/quynhtram/flask/cam-server-revised/thumbnails/%s.jpg' % vid, thumb)
+        cv2.imwrite('./thumbnails/%s.jpg' % vid, thumb)
 
 def video_to_frame(video_filename):
     """Extract frames from video"""

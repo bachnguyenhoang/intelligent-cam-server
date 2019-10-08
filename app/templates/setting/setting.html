@@ -17,9 +17,17 @@
             </tr>
             <tr>
 	      <td>{{ form.background.label }}</td></td><td>{{ form.background(value=default.backgroundRatio) }} </td>
+	      <td style="text-align:left">
+	      <div class="help-tip">
+    		<p>Background ratio</p>
+	      </div></td>
             </tr>
             <tr>
               <td>{{ form.history.label }}</td><td>{{form.history(value=default.history)}}</td>
+	      <td style="text-align:left">
+	      <div class="help-tip">
+    		<p>Number of previous frames applied to the subtractor</p>
+	      </div></td>
             </tr>
 
             <tr>
@@ -27,34 +35,66 @@
             </tr>
             <tr>
               <td>{{form.maxCorners.label}}</td><td>{{form.maxCorners(value=default.maxCorners)}}</td>
+	      <td style="text-align:left">
+	      <div class="help-tip">
+    		<p>Maximum number of corners for tracking.</p>
+	      </div></td>
             </tr>
             <tr>
               <td>{{form.qualityLevel.label}}</td><td>{{form.qualityLevel(value=default.qualityLevel)}}</td>
+	      <td style="text-align:left">
+	      <div class="help-tip">
+    		<p>Quality level threshold corresponding to the highest quality corner.</p>
+	      </div></td>
             </tr>
             <tr>
               <td>{{form.minDistance.label}}</td><td>{{form.minDistance(value=default.minDistance)}}</td>
+	      <td style="text-align:left">
+	      <div class="help-tip">
+    		<p>Minimum distance between corners in pixel</p>
+	      </div></td>
             </tr>
             <tr>
               <td>{{form.blockSize.label}}</td><td>{{form.blockSize(value=default.blockSize)}}</td>
+	      <td style="text-align:left">
+	      <div class="help-tip">
+    		<p>Block size for calculating eigenvalues</p>
+	      </div></td>
             </tr>
-
             <tr>
               <th>Region of interest</th>
             </tr>
             <tr>
-              <td>{{form.xmin.label}}</td><td>{{form.xmin(value=0)}}</td>
+              <td>{{form.xmin.label}}</td><td>{{form.xmin(value=default.xmin)}}</td>
+	      <td style="text-align:left">
+	      <div class="help-tip">
+    		<p>xmin</p>
+	      </div></td>
             </tr>
             <tr>
-              <td>{{form.ymin.label}}</td><td>{{form.ymin(value=0)}}</td>
+              <td>{{form.ymin.label}}</td><td>{{form.ymin(value=default.ymin)}}</td>
+	      <td>
+		<div class="help-tip">
+    		<p>ymin</p>
+		</div>
+	      </td>
             </tr>
             <tr>
-              <td>{{form.xmax.label}}</td><td>{{form.xmax(value=640)}}</td>
+              <td>{{form.xmax.label}}</td><td>{{form.xmax(value=default.xmax)}}</td>
+	      <td style="text-align:left">
+	      <div class="help-tip">
+    		<p>xmax</p>
+	      </div></td>
             </tr>
             <tr>
-              <td>{{form.ymax.label}}</td><td>{{form.ymax(value=480)}}</td>
+              <td>{{form.ymax.label}}</td><td>{{form.ymax(value=default.ymax)}}</td>
+	      <td style="text-align:left">
+	      <div class="help-tip">
+    		<p>ymax</p>
+	      </div></td>
             </tr>
          </table>
-
+	 <br>
          {{form.submit(class="btn btn-primary")}}
         </form>
 	<form method="post" action="">
