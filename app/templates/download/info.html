@@ -1,0 +1,66 @@
+<html>
+
+  <head>
+    <title>Information</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap/bootstrap.min.css') }}">
+  </head>
+  <body>
+  <table class="table table-striped table-bordered table-sm text-center">
+  <thead>
+    <tr>
+      <th scope="col" rowspan="2">#</th>
+      <th scope="col" rowspan="2">Date</th>
+      <th scope="col" rowspan="2">Time</th>
+      <th scope="col" rowspan="2">Frame count</th>
+      <th scope="col" colspan="6">Objects</th>
+      <th scope="col" rowspan="2" colspan="4">Download links</th>
+    </tr>
+    <tr>
+      <th scope="col">Bicycle</th>
+      <th scope="col">Bus</th>
+      <th scope="col">Car</th>
+      <th scope="col">Dog</th>
+      <th scope="col">Motorbike</th>
+      <th scope="col">Person</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for data in data_list %}
+      <tr>
+        <td>{{loop.index}}</td>
+        <td>{{data.name[0:10]}}</td>
+        <td>{{data.name[11:19]}}</td>
+        <td>{{data.frame_count}}</td>
+        <td>{{data.objects.bicycle}}</td>
+        <td>{{data.objects.bus}}</td>
+        <td>{{data.objects.car}}</td>
+        <td>{{data.objects.dog}}</td>
+        <td>{{data.objects.motorbike}}</td>
+        <td>{{data.objects.person}}</td>
+        <td><a href="/download/original/{{data.name}}">Original</a></td>
+        <td><a href="/download/videos/{{data.name}}">Velocity</a></td>
+        {% if data.frame_count != 0 %}
+          <td><a href="/download/detection/{{data.name}}">Detection</a></td>
+        {% else %}
+          <td><a href="" onclick="nullAlert()">Detection</a></td>
+        {% endif %}
+        <td><a href="/download/json/{{data.name + '.json'}}">JSON</a></td>
+      </tr>
+    {% endfor %}
+  </tbody>
+  </table>
+  <form id="package_form" action="" method="post">
+    <button type="submit" class="btn btn-primary" name="back_buttons" value="JSON" onclick="detectingAlert()">Generate files</button>
+    <button type="submit" class="btn" name="back_buttons" value="Back">Back</button>
+  </form>
+  </body>
+  <script>
+  function detectingAlert() {
+    alert("Generating! Please wait...");
+  }
+  function nullAlert() {
+    alert("File not generated!")
+  }
+  </script>
+</html>

@@ -244,5 +244,3 @@ class Camera(BaseCamera):
                       cv2.imencode('.jpg', next_frame)[1].tobytes(),
                       cv2.imencode('.jpg', mask)[1].tobytes())
 
-
-    
